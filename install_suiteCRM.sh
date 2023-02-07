@@ -5,7 +5,8 @@ sudo apt update
 sudo apt upgrade -y
 
 # install the required packages
-sudo apt install apache2 mariadb-server php php-mysql libapache2-mod-php unzip -y
+sudo apt install apache2 mariadb-server libapache2-mod-php php-gd php-json php-curl php-mbstring php-intl php-mysql php-xml php-zip
+
 
 # enable the Apache rewrite module
 sudo a2enmod rewrite
@@ -14,7 +15,7 @@ sudo a2enmod rewrite
 sudo systemctl restart apache2
 
 # create the database and user for SuiteCRM
-sudo mysql <<EOF
+sudo mysql -u root <<EOF
 CREATE DATABASE suitecrm;
 CREATE USER 'suitecrm'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON suitecrm.* TO 'suitecrm'@'localhost';
@@ -22,10 +23,9 @@ FLUSH PRIVILEGES;
 EOF
 
 # download and extract the latest version of SuiteCRM
-LATEST_VERSION=$(curl -s https://api.github.com/repos/salesagility/SuiteCRM/releases/latest | grep 'tag_name' | cut -d\" -f4)
-wget https://github.com/salesagility/SuiteCRM/releases/download/${LATEST_VERSION}/SuiteCRM-${LATEST_VERSION}.zip
-unzip SuiteCRM-${LATEST_VERSION}.zip
-sudo mv SuiteCRM-${LATEST_VERSION} /var/www/html/suitecrm
+sudo wget https://suitecrm.com/download/128/suite82/561949/suitecrm-8-2-3.zip -d /var/www/html/suitecrm
+sudo unzip suitecrm-8-2-3.zip
+
 
 # create a virtual host configuration for SuiteCRM
 sudo bash -c "cat > /etc/apache2/sites-available/suitecrm.conf <<EOF
